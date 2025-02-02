@@ -10,7 +10,6 @@ chrome.runtime.onInstalled.addListener(() => {
   const menuItems = [
     { id: 'summarize', title: 'Summarize Text' },
     { id: 'grammar', title: 'Check Grammar' },
-    { id: 'translate', title: 'Translate' },
     { id: 'expand', title: 'Expand Text' },
     { id: 'shorten', title: 'Shorten Text' },
     { id: 'rewrite', title: 'Rewrite Text' },
@@ -55,6 +54,12 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
 
   let prompt;
   switch (info.menuItemId) {
+    case 'summarize':
+      prompt = `Please summarize the following text:\n${selectedText}`;
+      break;
+    case 'grammar':
+      prompt = `Please check and correct any grammar and spelling issues in the following text:\n${selectedText}`;
+      break;
     case 'expand':
       prompt = `Please expand on the following text, adding more details and context:\n${selectedText}`;
       break;

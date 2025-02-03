@@ -20,12 +20,14 @@
   font-size: 14px;
   max-height: 150px;
   overflow-y: auto;
+  color: #ffffff;
 }
 
 .ai-response {
   padding: 10px;
   border-left: 3px solid #4CAF50;
   font-size: 14px;
+  color: #ffffff;
 }
 
 .close-button {

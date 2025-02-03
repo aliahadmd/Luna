@@ -5,39 +5,34 @@ chrome.storage.local.get(['apiKey'], (result) => {
   apiKey = result.apiKey;
 });
 
-// Create context menu items
-chrome.runtime.onInstalled.addListener(() => {
-  const menuItems = [
-    { id: 'summarize', title: 'Summarize Text' },
-    { id: 'grammar', title: 'Check Grammar' },
-    { id: 'expand', title: 'Expand Text' },
-    { id: 'shorten', title: 'Shorten Text' },
-    { id: 'rewrite', title: 'Rewrite Text' },
-    { id: 'tone-formal', title: 'Make Text Formal' },
-    { id: 'tone-casual', title: 'Make Text Casual' },
-    { id: 'simplify', title: 'Simplify Text' },
-    { id: 'summarize-bullet', title: 'Summarize in Bullet Points' },
-    { id: 'key-points', title: 'Extract Key Points' },
-    { id: 'translate-en', title: 'Translate to English' },
-    { id: 'translate-bn', title: 'Translate to Bangla' },
-    { id: 'paraphrase', title: 'Paraphrase Text' },
-    { id: 'emoji', title: 'Add Emojis' },
-    { id: 'code-explain', title: 'Explain Code' },
-    { id: 'persuasive', title: 'Make Text Persuasive' },
-    { id: 'story', title: 'Convert to Story' },
-    { id: 'headline', title: 'Generate Headline' },
-    { id: 'hashtags', title: 'Generate Hashtags' },
-    { id: 'question', title: 'Convert to Question' },
-  ];
+// Create/update context menu items
+async function updateContextMenu() {
+  // First, remove all existing menu items
+  await chrome.contextMenus.removeAll();
   
-
-  menuItems.forEach(item => {
+  // Load saved prompts
+  const { prompts = [] } = await chrome.storage.local.get('prompts');
+  
+  // Create menu items for each prompt
+  prompts.forEach(prompt => {
     chrome.contextMenus.create({
-      id: item.id,
-      title: item.title,
+      id: prompt.id,
+      title: prompt.title,
       contexts: ['selection']
     });
   });
+}
+
+// Listen for installation and update events
+chrome.runtime.onInstalled.addListener(() => {
+  updateContextMenu();
+});
+
+// Listen for changes to prompts in storage
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === 'local' && changes.prompts) {
+    updateContextMenu();
+  }
 });
 
 // Handle context menu clicks
@@ -52,70 +47,19 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return;
   }
 
-  let prompt;
-  switch (info.menuItemId) {
-    case 'summarize':
-      prompt = `Please summarize the following text:\n${selectedText}`;
-      break;
-    case 'grammar':
-      prompt = `Please check and correct any grammar and spelling issues in the following text:\n${selectedText}`;
-      break;
-    case 'expand':
-      prompt = `Please expand on the following text, adding more details and context:\n${selectedText}`;
-      break;
-    case 'shorten':
-      prompt = `Please shorten the following text while keeping the main points intact:\n${selectedText}`;
-      break;
-    case 'rewrite':
-      prompt = `Please rewrite the following text in a clearer and more natural way:\n${selectedText}`;
-      break;
-    case 'tone-formal':
-      prompt = `Please rewrite the following text in a formal tone:\n${selectedText}`;
-      break;
-    case 'tone-casual':
-      prompt = `Please rewrite the following text in a more casual and friendly tone:\n${selectedText}`;
-      break;
-    case 'simplify':
-      prompt = `Please simplify the following text for easier understanding:\n${selectedText}`;
-      break;
-    case 'summarize-bullet':
-      prompt = `Please summarize the following text in bullet points:\n${selectedText}`;
-      break;
-    case 'key-points':
-      prompt = `Please extract and list the key points from the following text:\n${selectedText}`;
-      break;
-    case 'translate-en':
-      prompt = `Please translate the following text to English:\n${selectedText}`;
-      break;
-    case 'translate-bn':
-      prompt = `Please translate the following text to Bangla:\n${selectedText}`;
-      break;
-    case 'paraphrase':
-      prompt = `Please paraphrase the following text while keeping its original meaning:\n${selectedText}`;
-      break;
-    case 'emoji':
-      prompt = `Please rewrite the following text and add relevant emojis to enhance it:\n${selectedText}`;
-      break;
-    case 'code-explain':
-      prompt = `Please explain the following code in simple terms:\n${selectedText}`;
-      break;
-    case 'persuasive':
-      prompt = `Please rewrite the following text to make it more persuasive and engaging:\n${selectedText}`;
-      break;
-    case 'story':
-      prompt = `Please turn the following text into a short engaging story:\n${selectedText}`;
-      break;
-    case 'headline':
-      prompt = `Please generate a catchy headline based on the following text:\n${selectedText}`;
-      break;
-    case 'hashtags':
-      prompt = `Please generate relevant hashtags for the following text:\n${selectedText}`;
-      break;
-    case 'question':
-      prompt = `Please convert the following statement into an engaging question:\n${selectedText}`;
-      break;
-    
+  // Load prompts
+  const { prompts = [] } = await chrome.storage.local.get('prompts');
+  const selectedPrompt = prompts.find(p => p.id === info.menuItemId);
+  
+  if (!selectedPrompt) {
+    await sendMessageToTab(tab.id, {
+      action: 'showResult',
+      result: 'Prompt not found'
+    });
+    return;
   }
+
+  const prompt = selectedPrompt.template.replace('{text}', selectedText);
 
   try {
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {

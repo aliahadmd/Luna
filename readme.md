@@ -36,6 +36,31 @@ This extension uses Chrome's Manifest V3 architecture and integrates with Google
 4. The response will be typed out with a typing effect
 5. Close the popup using the × button
 
+## new 
+
+These changes will:
+
+1. Add a new settings page where users can manage prompts
+2. Store prompts in chrome.storage.local
+3. Allow CRUD operations for prompts through the UI
+4. Make the context menu dynamic based on stored prompts
+5. Maintain backward compatibility with default prompts
+
+To use the new functionality:
+
+1. Click the extension icon in the toolbar
+2. Click "Extension Options" or right-click and select "Options"
+3. Use the settings page to add, view, or delete prompts
+4. The context menu will automatically update with your custom prompts
+
+The prompts are stored with three components:
+- id: Unique identifier for the prompt
+- title: What appears in the context menu
+- template: The actual prompt template with {text} placeholder
+
+This makes the extension much more flexible and allows users to customize it for their specific needs without touching the code.
+
+
 ## Architecture
 
 ### Background Script (background.js)

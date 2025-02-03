@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AI Assistant Settings</title>
+  <link rel="stylesheet" href="../styles/styles.css">
+  <style>
+    .prompt-list {
+      margin: 20px 0;
+    }
+    .prompt-item {
+      display: flex;
+      align-items: center;
+      margin: 10px 0;
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 4px;
+    }
+    .prompt-item button {
+      margin-left: 10px;
+    }
+    .add-prompt-form {
+      margin: 20px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Prompt Management</h2>
+    
+    <div class="add-prompt-form">
+      <h3>Add New Prompt</h3>
+      <div class="form-group">
+        <label for="promptId">ID:</label>
+        <input type="text" id="promptId" placeholder="e.g., summarize">
+      </div>
+      <div class="form-group">
+        <label for="promptTitle">Menu Title:</label>
+        <input type="text" id="promptTitle" placeholder="e.g., Summarize Text">
+      </div>
+      <div class="form-group">
+        <label for="promptTemplate">Prompt Template:</label>
+        <textarea id="promptTemplate" placeholder="e.g., Please summarize the following text:\n{text}"></textarea>
+      </div>
+      <button id="addPrompt">Add Prompt</button>
+    </div>
+
+    <div class="prompt-list">
+      <h3>Current Prompts</h3>
+      <div id="promptsList"></div>
+    </div>
+  </div>
+  <script src="settings.js"></script>
+</body>
+</html> 

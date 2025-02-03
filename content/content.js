@@ -1,6 +1,6 @@
 // Create and inject result containers
 const resultContainer = document.createElement('div');
-resultContainer.className = 'ai-assistant-result';
+resultContainer.className = 'luna-ai-assistant luna-ai-assistant-result';
 document.body.appendChild(resultContainer);
 
 // Create a container for the original text
@@ -31,6 +31,7 @@ function showResult(result) {
   // Display AI response with typing effect
   aiResponseContainer.innerHTML = '<strong>AI Response:</strong><br>';
   const responseTextElement = document.createElement('div');
+  responseTextElement.className = 'response-text';
   aiResponseContainer.appendChild(responseTextElement);
   
   // Show the container
@@ -50,8 +51,25 @@ function showResult(result) {
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
     
-    resultContainer.style.top = `${rect.bottom + window.scrollY + 10}px`;
-    resultContainer.style.left = `${rect.left + window.scrollX}px`;
+    // Add some checks to ensure the popup stays within viewport
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    
+    let left = rect.left + window.scrollX;
+    let top = rect.bottom + window.scrollY + 10;
+    
+    // Check right edge
+    if (left + resultContainer.offsetWidth > viewportWidth) {
+      left = viewportWidth - resultContainer.offsetWidth - 20;
+    }
+    
+    // Check bottom edge
+    if (top + resultContainer.offsetHeight > viewportHeight + window.scrollY) {
+      top = rect.top + window.scrollY - resultContainer.offsetHeight - 10;
+    }
+    
+    resultContainer.style.top = `${top}px`;
+    resultContainer.style.left = `${left}px`;
   }
 
   // Simulate typing effect for the result
@@ -60,7 +78,7 @@ function showResult(result) {
     if (index < result.length) {
       responseTextElement.textContent += result.charAt(index);
       index++;
-      setTimeout(typeWriter, 20); // Adjust speed by changing timeout
+      setTimeout(typeWriter, 20);
     }
   };
   typeWriter();

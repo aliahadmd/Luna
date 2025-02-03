@@ -1,36 +1,60 @@
-.ai-assistant-result {
+/* Add a unique prefix to avoid conflicts */
+.luna-ai-assistant {
+  /* Container styles */
+  --luna-bg-color: rgb(0, 0, 0);
+  --luna-text-color: #ffffff;
+  --luna-border-color: #ccc;
+  --luna-accent-color: #4CAF50;
+}
+
+.luna-ai-assistant-result {
   position: absolute;
   display: none;
   max-width: 600px;
+  min-width: 300px;
   padding: 20px;
-  background: rgb(0, 0, 0);
-  border: 1px solid #ccc;
+  background: var(--luna-bg-color);
+  border: 1px solid var(--luna-border-color);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  z-index: 10000;
-  font-family: Arial, sans-serif;
+  z-index: 2147483647; /* Highest possible z-index */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
   line-height: 1.5;
+  box-sizing: border-box;
+  color: var(--luna-text-color);
 }
 
-.original-text {
+.luna-ai-assistant-result * {
+  box-sizing: border-box;
+  font-family: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+.luna-ai-assistant-result .original-text {
   margin-bottom: 15px;
   padding: 10px;
-  background: #000000;
+  background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   font-size: 14px;
   max-height: 150px;
   overflow-y: auto;
-  color: #ffffff;
+  color: var(--luna-text-color);
 }
 
-.ai-response {
+.luna-ai-assistant-result .ai-response {
   padding: 10px;
-  border-left: 3px solid #4CAF50;
+  border-left: 3px solid var(--luna-accent-color);
   font-size: 14px;
-  color: #ffffff;
+  color: var(--luna-text-color);
 }
 
-.close-button {
+.luna-ai-assistant-result .response-text {
+  margin-top: 8px;
+  line-height: 1.6;
+}
+
+.luna-ai-assistant-result .close-button {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -38,44 +62,86 @@
   background: none;
   cursor: pointer;
   font-size: 20px;
-  color: #666;
+  color: var(--luna-text-color);
   padding: 5px;
   line-height: 1;
+  opacity: 0.7;
+  width: auto;
+  min-width: auto;
 }
 
-.close-button:hover {
+.luna-ai-assistant-result .close-button:hover {
+  opacity: 1;
+}
+
+/* Settings page specific styles */
+.luna-settings-container {
+  padding: 20px;
+  min-width: 300px;
+  background: white;
   color: #333;
 }
 
-.container {
-  padding: 20px;
-  min-width: 300px;
-}
-
-.form-group {
+.luna-settings-container .form-group {
   margin-bottom: 15px;
 }
 
-input {
+.luna-settings-container input,
+.luna-settings-container textarea {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
+  border: 1px solid var(--luna-border-color, #ccc);
+  border-radius: 4px;
+  background: white;
+  color: #333;
 }
 
-button {
+.luna-settings-container textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.luna-settings-container button {
   padding: 8px 15px;
-  background: #4CAF50;
+  background: var(--luna-accent-color, #4CAF50);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
+  width: auto;
 }
 
-button:hover {
+.luna-settings-container button:hover {
   background: #45a049;
 }
 
-#status {
+.luna-settings-container #status {
   margin-top: 10px;
-  color: green;
+  color: var(--luna-accent-color, #4CAF50);
+}
+
+/* Prompt list styles */
+.luna-settings-container .prompt-list {
+  margin: 20px 0;
+}
+
+.luna-settings-container .prompt-item {
+  display: flex;
+  align-items: flex-start;
+  margin: 10px 0;
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  justify-content: space-between;
+}
+
+.luna-settings-container .prompt-item button {
+  margin-left: 10px;
+  background: #dc3545;
+}
+
+.luna-settings-container .prompt-item button:hover {
+  background: #c82333;
 } 
